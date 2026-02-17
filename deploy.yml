@@ -1,22 +1,23 @@
 ---
-- name: Pull Docker Image from Docker Hub
+- name: Deploy Docker Container
   hosts: localhost
-  remote_user: raju
+  connection: local
   become: false
-  tasks:
-    - name: Pull Docker Image
-      docker_image:
-        name: "vishnudholu/calculator"
-        source: pull
-      register: docker_pull_result
 
-    - name: Display Docker Pull Result
-      debug:
-        var: docker_pull_result
+  tasks:
 
     - name: Start Docker service
       service:
         name: docker
         state: started
-    - name: Running container
-      shell: docker run -it -d --name calculator vishnudholu/calculator /bin/bash
+
+    - name: Pull Docker Image
+      docker_image:
+        name: "vishnudholu/calculator:latest"
+        source: pull
+
+    - name: Remove existing container (if any)
+      shell: docker rm -f calculator || true
+
+    - name: Run Docker Container
+      shell: docker run -d --name calculator vishnudholu/calculator:latest
