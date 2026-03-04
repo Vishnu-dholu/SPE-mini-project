@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Tag & Push Docker Image') {
+        stage('Login to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('', 'DockerHubCred') {
@@ -38,13 +38,31 @@ pipeline {
             }
         }
 
-        stage('Run Ansible Playbook') {
+        stage('Run Ansible Deployment') {
             steps {
                 ansiblePlaybook(
                     playbook: 'deploy.yml',
                     inventory: 'inventory'
                 )
             }
+        }
+    }
+
+    post {
+        success {
+            emailext (
+                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME}",
+                body: "Build completed successfully.\nDocker image pushed and deployed.",
+                to: "your-email@gmail.com"
+            )
+        }
+
+        failure {
+            emailext (
+                subject: "Jenkins Build FAILED: ${env.JOB_NAME}",
+                body: "Build failed. Please check Jenkins logs.",
+                to: "your-email@gmail.com"
+            )
         }
     }
 }
