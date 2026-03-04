@@ -1,35 +1,64 @@
 #!/bin/bash
-# Scientific Calculator Shell Program
+# Scientific Calculator Shell Program using while loop
 
-echo "1. Addition"
-echo "2. Subtraction"
-echo "3. Multiplication"
-echo "4. Division"
+while true
+do
+    echo "------ Scientific Calculator ------"
+    echo "1. Square Root (√x)"
+    echo "2. Factorial (x!)"
+    echo "3. Natural Logarithm ln(x)"
+    echo "4. Power (x^b)"
+    echo "5. Exit"
 
-echo -n "Enter First Number: "
-read a
-echo -n "Enter Second Number: "
-read b
-echo -n "Enter the Choice: "
-read ch
+    echo -n "Enter your choice: "
+    read ch
 
-case $ch in
-   1) res=$(expr $a + $b)
-      ;;
-   2) res=$(expr $a - $b)
-      ;;
-   3) res=$(expr $a \* $b)
-      ;;
-   4)
-      if [ $b -eq 0 ]; then
-         echo "Division by zero not allowed"
-         exit 1
-      fi
-      res=$(expr $a / $b)
-      ;;
-   *) echo "Invalid choice"
-      exit 1
-      ;;
-esac
+    case $ch in
+        1)
+            echo -n "Enter number: "
+            read x
+            res=$(echo "scale=4; sqrt($x)" | bc -l)
+            echo "Square root of $x = $res"
+            ;;
 
-echo "Result: $res"
+        2)
+            echo -n "Enter number: "
+            read x
+            fact=1
+
+            for (( i=1; i<=x; i++ ))
+            do
+                fact=$((fact * i))
+            done
+
+            echo "Factorial of $x = $fact"
+            ;;
+
+        3)
+            echo -n "Enter number: "
+            read x
+            res=$(echo "scale=4; l($x)" | bc -l)
+            echo "ln($x) = $res"
+            ;;
+
+        4)
+            echo -n "Enter base (x): "
+            read x
+            echo -n "Enter power (b): "
+            read b
+            res=$(echo "$x^$b" | bc -l)
+            echo "$x^$b = $res"
+            ;;
+
+        5)
+            echo "Exiting calculator..."
+            break
+            ;;
+
+        *)
+            echo "Invalid choice. Try again."
+            ;;
+    esac
+
+    echo ""
+done
