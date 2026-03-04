@@ -7,12 +7,12 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_NAME = 'calculator'
-        DOCKER_HUB_IMAGE = 'vishnudholu/calculator'
-        GITHUB_REPO_URL = 'https://github.com/Vishnu-dholu/SPE-mini-project.git'
+        DOCKER_HUB_IMAGE  = 'vishnudholu/calculator'
+        GITHUB_REPO_URL   = 'https://github.com/Vishnu-dholu/SPE-mini-project.git'
+        EMAIL_RECIPIENT   = 'dholuvishnu10@gmail.com'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'main', url: "${GITHUB_REPO_URL}"
@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Login to DockerHub') {
+        stage('Tag & Push Docker Image') {
             steps {
                 script {
                     docker.withRegistry('', 'DockerHubCred') {
@@ -38,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('Run Ansible Deployment') {
+        stage('Run Ansible Playbook') {
             steps {
                 ansiblePlaybook(
                     playbook: 'deploy.yml',
@@ -50,21 +50,14 @@ pipeline {
 
     post {
         success {
-            emailext (
-                subject: "Jenkins Build SUCCESS: ${env.JOB_NAME}",
-                body: "Build completed successfully.\nDocker image pushed and deployed.",
-                to: "your-email@gmail.com"
-            )
+            mail to: "${EMAIL_RECIPIENT}",
+                 subject: "SUCCESS: Calculator Pipeline Update",
+                 body: "The latest push to GitHub was successfully built and deployed. Check console output: ${env.BUILD_URL}"
         }
-
         failure {
-            emailext (
-                subject: "Jenkins Build FAILED: ${env.JOB_NAME}",
-                body: "Build failed. Please check Jenkins logs.",
-                to: "your-email@gmail.com"
-            )
+            mail to: "${EMAIL_RECIPIENT}",
+                 subject: "FAILURE: Calculator Pipeline Update",
+                 body: "The pipeline failed. Please check the console output to debug: ${env.BUILD_URL}"
         }
     }
 }
-
-// test

@@ -1,24 +1,21 @@
 ---
-- name: Deploy Calculator Container
-  hosts: local
+- name: Deploy Docker Container
+  hosts: localhost
+  connection: local
   become: false
 
   tasks:
-
-    - name: Pull latest Docker image
-      community.docker.docker_image:
-        name: vishnudholu/calculator
-        tag: latest
-        source: pull
-
-    - name: Remove old container
-      community.docker.docker_container:
-        name: calculator
-        state: absent
-
-    - name: Run new container
-      community.docker.docker_container:
-        name: calculator
-        image: vishnudholu/calculator:latest
+    - name: Start Docker service
+      service:
+        name: docker
         state: started
-        detach: true
+      become: true
+
+    - name: Pull Docker Image
+      shell: docker pull vishnudholu/calculator:latest
+
+    - name: Remove existing container (if any)
+      shell: docker rm -f calculator || true
+
+    - name: Run Docker Container (Interactive & Detached)
+      shell: docker run -dit --name calculator vishnudholu/calculator:latest
