@@ -5,12 +5,6 @@
   become: false
 
   tasks:
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-      become: true
-
     - name: Pull Docker Image
       shell: docker pull vishnudholu/calculator:latest
 
