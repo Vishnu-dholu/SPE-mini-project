@@ -1,13 +1,7 @@
-FROM ubuntu:22.04
-
-RUN apt-get update && \
-    apt-get install -y bc dos2unix && \
-    rm -rf /var/lib/apt/lists/*
-
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y dos2unix bc gawk
 WORKDIR /app
-
-COPY calculator.sh .
-
-RUN dos2unix calculator.sh && chmod +x calculator.sh
-
-CMD ["bash", "./calculator.sh"]
+COPY calculator.sh /app/calculator.sh
+RUN dos2unix /app/calculator.sh
+RUN chmod +x /app/calculator.sh
+CMD ["bash", "/app/calculator.sh"]
