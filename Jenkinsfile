@@ -19,6 +19,15 @@ pipeline {
             }
         }
 
+        stage('Test Calculator') {
+            steps {
+                script {
+                    sh 'chmod +x test_calculator.sh'
+                    sh './test_calculator.sh'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
