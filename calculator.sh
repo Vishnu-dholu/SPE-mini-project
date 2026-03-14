@@ -17,28 +17,41 @@ do
         1)
             echo -n "Enter number: "
             read x
-            res=$(echo "scale=4; sqrt($x)" | bc -l)
-            echo "Square root of $x = $res"
+
+            if (( $(echo "$x < 0" | bc -l) )); then
+                echo "Square root undefined for negative numbers"
+            else
+                res=$(echo "scale=4; sqrt($x)" | bc -l)
+                echo "Square root of $x = $res"
+            fi
             ;;
 
         2)
             echo -n "Enter number: "
             read x
-            fact=1
 
-            for (( i=1; i<=x; i++ ))
-            do
-                fact=$((fact * i))
-            done
-
-            echo "Factorial of $x = $fact"
+            if [ "$x" -lt 0 ]; then
+                echo "Factorial undefined for negative numbers"
+            else
+                fact=1
+                for ((i=1;i<=x;i++))
+                do
+                    fact=$((fact * i))
+                done
+                echo "Factorial of $x = $fact"
+            fi
             ;;
 
         3)
             echo -n "Enter number: "
             read x
-            res=$(echo "scale=4; l($x)" | bc -l)
-            echo "ln($x) = $res"
+
+            if (( $(echo "$x <= 0" | bc -l) )); then
+                echo "ln(x) undefined for x <= 0"
+            else
+                res=$(echo "scale=4; l($x)" | bc -l)
+                echo "ln($x) = $res"
+            fi
             ;;
 
         4)
@@ -46,7 +59,8 @@ do
             read x
             echo -n "Enter power (b): "
             read b
-            res=$(echo "$x^$b" | bc -l)
+
+            res=$(echo "scale=4; $x^$b" | bc -l)
             echo "$x^$b = $res"
             ;;
 
